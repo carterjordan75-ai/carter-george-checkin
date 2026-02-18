@@ -295,6 +295,38 @@
             color: #999 !important;
         }
 
+        input[type="number"] {
+            width: 100%;
+            background: transparent;
+            border: none;
+            border-bottom: 2px solid #444;
+            color: #ffffff;
+            padding: 14px 0;
+            font-size: 16px;
+            font-family: 'Outfit', sans-serif;
+            transition: border-color 0.3s ease;
+            text-align: center;
+        }
+
+        input[type="number"]:focus {
+            outline: none;
+            border-bottom-color: #00a7e1;
+        }
+
+        input[type="number"]::placeholder {
+            color: #666;
+        }
+
+        input[type="number"]::-webkit-outer-spin-button,
+        input[type="number"]::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        input[type="number"] {
+            -moz-appearance: textfield;
+        }
+
         .dob-row {
             display: grid;
             grid-template-columns: 1fr 1fr 1fr;
@@ -573,33 +605,15 @@
                     <div class="dob-row">
                         <div>
                             <label for="dobDay" style="font-size: 11px; margin-bottom: 5px;">Day</label>
-                            <select id="dobDay" required>
-                                <option value="" disabled selected>Day</option>
-                            </select>
+                            <input type="number" id="dobDay" min="1" max="31" placeholder="DD" required>
                         </div>
                         <div>
                             <label for="dobMonth" style="font-size: 11px; margin-bottom: 5px;">Month</label>
-                            <select id="dobMonth" required>
-                                <option value="" disabled selected>Month</option>
-                                <option value="01">January</option>
-                                <option value="02">February</option>
-                                <option value="03">March</option>
-                                <option value="04">April</option>
-                                <option value="05">May</option>
-                                <option value="06">June</option>
-                                <option value="07">July</option>
-                                <option value="08">August</option>
-                                <option value="09">September</option>
-                                <option value="10">October</option>
-                                <option value="11">November</option>
-                                <option value="12">December</option>
-                            </select>
+                            <input type="number" id="dobMonth" min="1" max="12" placeholder="MM" required>
                         </div>
                         <div>
                             <label for="dobYear" style="font-size: 11px; margin-bottom: 5px;">Year</label>
-                            <select id="dobYear" required>
-                                <option value="" disabled selected>Year</option>
-                            </select>
+                            <input type="number" id="dobYear" min="1900" placeholder="YYYY" required>
                         </div>
                     </div>
                 </div>
@@ -646,35 +660,10 @@
 
             // Setup all event listeners
             setupEventListeners() {
-                this.populateDOBDropdowns();
-
                 const form = document.getElementById('checkInFormElement');
                 form.addEventListener('submit', (e) => this.handleFormSubmit(e));
             },
 
-            // Populate day, month, year dropdowns
-            populateDOBDropdowns() {
-                const now = new Date();
-                const currentYear = now.getFullYear();
-
-                // Populate days (1-31)
-                const daySelect = document.getElementById('dobDay');
-                for (let i = 1; i <= 31; i++) {
-                    const option = document.createElement('option');
-                    option.value = String(i).padStart(2, '0');
-                    option.textContent = String(i).padStart(2, '0');
-                    daySelect.appendChild(option);
-                }
-
-                // Populate years (from 1900 to current year)
-                const yearSelect = document.getElementById('dobYear');
-                for (let i = currentYear; i >= 1900; i--) {
-                    const option = document.createElement('option');
-                    option.value = String(i);
-                    option.textContent = String(i);
-                    yearSelect.appendChild(option);
-                }
-            },
 
             // Show home screen
             showHomeScreen() {
