@@ -262,6 +262,15 @@
             border-bottom-color: #00a7e1;
         }
 
+        select option {
+            background-color: #1a1a1a;
+            color: #ffffff;
+        }
+
+        select option:disabled {
+            color: #999;
+        }
+
         .dob-row {
             display: grid;
             grid-template-columns: 1fr 1fr 1fr;
@@ -541,13 +550,13 @@
                         <div>
                             <label for="dobDay" style="font-size: 11px; margin-bottom: 5px;">Day</label>
                             <select id="dobDay" required>
-                                <option value="">Day</option>
+                                <option value="" disabled selected>Day</option>
                             </select>
                         </div>
                         <div>
                             <label for="dobMonth" style="font-size: 11px; margin-bottom: 5px;">Month</label>
                             <select id="dobMonth" required>
-                                <option value="">Month</option>
+                                <option value="" disabled selected>Month</option>
                                 <option value="01">January</option>
                                 <option value="02">February</option>
                                 <option value="03">March</option>
@@ -565,7 +574,7 @@
                         <div>
                             <label for="dobYear" style="font-size: 11px; margin-bottom: 5px;">Year</label>
                             <select id="dobYear" required>
-                                <option value="">Year</option>
+                                <option value="" disabled selected>Year</option>
                             </select>
                         </div>
                     </div>
