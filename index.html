@@ -489,17 +489,32 @@
             display: none;
         }
 
-        /* Error field highlight */
-        input.error-field {
-            border-bottom: 3px solid #ff6b6b !important;
-            box-shadow: 0 0 15px rgba(255, 107, 107, 0.8), inset 0 0 5px rgba(255, 107, 107, 0.3) !important;
-            animation: error-pulse 0.5s ease;
+        /* Form group positioning for error indicator */
+        .form-group {
+            position: relative;
         }
 
-        @keyframes error-pulse {
-            0% { box-shadow: 0 0 5px rgba(255, 107, 107, 0.5), inset 0 0 2px rgba(255, 107, 107, 0.2); }
-            50% { box-shadow: 0 0 20px rgba(255, 107, 107, 1), inset 0 0 8px rgba(255, 107, 107, 0.4); }
-            100% { box-shadow: 0 0 15px rgba(255, 107, 107, 0.8), inset 0 0 5px rgba(255, 107, 107, 0.3); }
+        /* Error field highlight - red underline */
+        input.error-field {
+            border-bottom: 2px solid #ff6b6b !important;
+        }
+
+        /* Error indicator dot - small red circle */
+        .form-group.has-error::after {
+            content: '';
+            position: absolute;
+            right: -18px;
+            top: 18px;
+            width: 10px;
+            height: 10px;
+            background-color: #ff6b6b;
+            border-radius: 50%;
+            animation: pulse 0.8s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
         }
 
         /* Animations */
@@ -737,6 +752,7 @@
                 event.preventDefault();
 
                 // Clear previous errors
+                document.querySelectorAll('.form-group').forEach(fg => fg.classList.remove('has-error'));
                 document.getElementById('firstName').classList.remove('error-field');
                 document.getElementById('lastName').classList.remove('error-field');
                 document.getElementById('dobDay').classList.remove('error-field');
@@ -752,22 +768,36 @@
                 // Validation
                 if (!firstName) {
                     document.getElementById('firstName').classList.add('error-field');
+                    document.getElementById('firstName').closest('.form-group').classList.add('has-error');
                     return;
                 }
                 if (!lastName) {
                     document.getElementById('lastName').classList.add('error-field');
+                    document.getElementById('lastName').closest('.form-group').classList.add('has-error');
                     return;
                 }
                 if (!dobDay || !dobMonth || !dobYear) {
-                    if (!dobDay) document.getElementById('dobDay').classList.add('error-field');
-                    if (!dobMonth) document.getElementById('dobMonth').classList.add('error-field');
-                    if (!dobYear) document.getElementById('dobYear').classList.add('error-field');
+                    if (!dobDay) {
+                        document.getElementById('dobDay').classList.add('error-field');
+                        document.getElementById('dobDay').closest('.form-group').classList.add('has-error');
+                    }
+                    if (!dobMonth) {
+                        document.getElementById('dobMonth').classList.add('error-field');
+                        document.getElementById('dobMonth').closest('.form-group').classList.add('has-error');
+                    }
+                    if (!dobYear) {
+                        document.getElementById('dobYear').classList.add('error-field');
+                        document.getElementById('dobYear').closest('.form-group').classList.add('has-error');
+                    }
                     return;
                 }
                 if (!this.isValidDOB(dobDay, dobMonth, dobYear)) {
                     document.getElementById('dobDay').classList.add('error-field');
                     document.getElementById('dobMonth').classList.add('error-field');
                     document.getElementById('dobYear').classList.add('error-field');
+                    document.getElementById('dobDay').closest('.form-group').classList.add('has-error');
+                    document.getElementById('dobMonth').closest('.form-group').classList.add('has-error');
+                    document.getElementById('dobYear').closest('.form-group').classList.add('has-error');
                     return;
                 }
 
