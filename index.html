@@ -483,25 +483,29 @@
         /* Toast Notification */
         .toast {
             position: fixed;
-            bottom: 40px;
-            left: 50%;
-            transform: translateX(-50%) translateY(100px);
-            background: #ff6b6b;
-            color: #ffffff;
-            padding: 16px 24px;
-            border-radius: 8px;
-            font-size: 14px;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 107, 107, 0.15);
+            backdrop-filter: blur(4px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
             z-index: 100;
             opacity: 0;
-            transition: all 0.4s ease;
+            transition: opacity 0.3s ease;
             pointer-events: none;
-            max-width: 400px;
+            font-size: 16px;
+            color: #ffffff;
+            border-left: 4px solid #ff6b6b;
+            padding: 20px;
             text-align: center;
         }
 
         .toast.show {
             opacity: 1;
-            transform: translateX(-50%) translateY(0);
+            pointer-events: auto;
         }
 
         /* Animations */
