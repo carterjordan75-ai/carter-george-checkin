@@ -1,0 +1,11 @@
+<svg viewBox="0 0 1754 1240" xmlns="http://www.w3.org/2000/svg">
+  <!-- Circle -->
+  <circle cx="877" cy="347" r="175" fill="none" stroke="#00a7e1" stroke-width="50"/>
+  <path d="M 877 172 Q 952 172 1000 220 Q 1048 268 1048 347 Q 1048 426 1000 474 Q 952 522 877 522" fill="none" stroke="#00a7e1" stroke-width="50" stroke-linecap="round"/>
+
+  <!-- Curved elements inside circle -->
+  <path d="M 650 347 Q 650 472 725 547" fill="none" stroke="#666" stroke-width="50" stroke-linecap="round"/>
+
+  <!-- Text -->
+  <text x="877" y="1000" font-family="Arial, sans-serif" font-size="200" font-weight="400" text-anchor="middle" fill="#666">Carter &amp; George</text>
+</svg>
