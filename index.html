@@ -492,6 +492,12 @@
         /* Form group positioning for error indicator */
         .form-group {
             position: relative;
+            display: flex;
+            align-items: flex-start;
+        }
+
+        .form-row .form-group {
+            flex-direction: column;
         }
 
         /* Error field highlight - red underline */
@@ -500,15 +506,14 @@
         }
 
         /* Error indicator dot - small red circle */
-        .form-group.has-error::after {
-            content: '';
-            position: absolute;
-            right: -18px;
-            top: 18px;
+        .error-indicator {
             width: 10px;
             height: 10px;
             background-color: #ff6b6b;
             border-radius: 50%;
+            margin-left: 10px;
+            margin-top: 18px;
+            flex-shrink: 0;
             animation: pulse 0.8s ease-in-out infinite;
         }
 
@@ -747,11 +752,29 @@
                 return true;
             },
 
+            // Add error indicator to field
+            addErrorIndicator(inputId) {
+                const input = document.getElementById(inputId);
+                const formGroup = input.closest('.form-group');
+
+                // Remove existing error indicator if present
+                const existingIndicator = formGroup.querySelector('.error-indicator');
+                if (existingIndicator) {
+                    existingIndicator.remove();
+                }
+
+                // Create and add error indicator
+                const indicator = document.createElement('div');
+                indicator.className = 'error-indicator';
+                formGroup.appendChild(indicator);
+            },
+
             // Handle form submission
             async handleFormSubmit(event) {
                 event.preventDefault();
 
                 // Clear previous errors
+                document.querySelectorAll('.error-indicator').forEach(ei => ei.remove());
                 document.querySelectorAll('.form-group').forEach(fg => fg.classList.remove('has-error'));
                 document.getElementById('firstName').classList.remove('error-field');
                 document.getElementById('lastName').classList.remove('error-field');
@@ -769,25 +792,30 @@
                 if (!firstName) {
                     document.getElementById('firstName').classList.add('error-field');
                     document.getElementById('firstName').closest('.form-group').classList.add('has-error');
+                    this.addErrorIndicator('firstName');
                     return;
                 }
                 if (!lastName) {
                     document.getElementById('lastName').classList.add('error-field');
                     document.getElementById('lastName').closest('.form-group').classList.add('has-error');
+                    this.addErrorIndicator('lastName');
                     return;
                 }
                 if (!dobDay || !dobMonth || !dobYear) {
                     if (!dobDay) {
                         document.getElementById('dobDay').classList.add('error-field');
                         document.getElementById('dobDay').closest('.form-group').classList.add('has-error');
+                        this.addErrorIndicator('dobDay');
                     }
                     if (!dobMonth) {
                         document.getElementById('dobMonth').classList.add('error-field');
                         document.getElementById('dobMonth').closest('.form-group').classList.add('has-error');
+                        this.addErrorIndicator('dobMonth');
                     }
                     if (!dobYear) {
                         document.getElementById('dobYear').classList.add('error-field');
                         document.getElementById('dobYear').closest('.form-group').classList.add('has-error');
+                        this.addErrorIndicator('dobYear');
                     }
                     return;
                 }
@@ -798,6 +826,9 @@
                     document.getElementById('dobDay').closest('.form-group').classList.add('has-error');
                     document.getElementById('dobMonth').closest('.form-group').classList.add('has-error');
                     document.getElementById('dobYear').closest('.form-group').classList.add('has-error');
+                    this.addErrorIndicator('dobDay');
+                    this.addErrorIndicator('dobMonth');
+                    this.addErrorIndicator('dobYear');
                     return;
                 }
 
