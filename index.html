@@ -327,10 +327,15 @@
             -moz-appearance: textfield;
         }
 
+        .form-group:has(#dobDay) {
+            margin-bottom: 40px;
+        }
+
         .dob-row {
             display: grid;
             grid-template-columns: 1fr 1fr 1fr;
             gap: 20px;
+            margin-top: 15px;
         }
 
         .form-actions {
@@ -662,6 +667,29 @@
             setupEventListeners() {
                 const form = document.getElementById('checkInFormElement');
                 form.addEventListener('submit', (e) => this.handleFormSubmit(e));
+
+                // Auto-focus to next field when date fields are filled
+                const dobDay = document.getElementById('dobDay');
+                const dobMonth = document.getElementById('dobMonth');
+                const dobYear = document.getElementById('dobYear');
+
+                dobDay.addEventListener('input', (e) => {
+                    if (e.target.value.length === 2) {
+                        dobMonth.focus();
+                    }
+                });
+
+                dobMonth.addEventListener('input', (e) => {
+                    if (e.target.value.length === 2) {
+                        dobYear.focus();
+                    }
+                });
+
+                dobYear.addEventListener('input', (e) => {
+                    if (e.target.value.length === 4) {
+                        form.querySelector('button[type="submit"]').focus();
+                    }
+                });
             },
 
 
