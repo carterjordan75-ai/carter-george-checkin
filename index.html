@@ -183,6 +183,8 @@
 
         .form-group {
             margin-bottom: 30px;
+            position: relative;
+            overflow: visible;
         }
 
         .form-row {
@@ -489,17 +491,6 @@
             display: none;
         }
 
-        /* Form group positioning for error indicator */
-        .form-group {
-            position: relative;
-            display: flex;
-            align-items: flex-start;
-        }
-
-        .form-row .form-group {
-            flex-direction: column;
-        }
-
         /* Error field highlight - red underline */
         input.error-field {
             border-bottom: 2px solid #ff6b6b !important;
@@ -507,14 +498,25 @@
 
         /* Error indicator dot - small red circle */
         .error-indicator {
+            position: absolute;
             width: 10px;
             height: 10px;
             background-color: #ff6b6b;
             border-radius: 50%;
-            margin-left: 10px;
-            margin-top: 18px;
-            flex-shrink: 0;
             animation: pulse 0.8s ease-in-out infinite;
+            flex-shrink: 0;
+        }
+
+        /* Positioning for error indicator in regular form groups */
+        .form-group:not(.form-row .form-group) .error-indicator {
+            right: -25px;
+            top: 18px;
+        }
+
+        /* Positioning for error indicator in form-row groups */
+        .form-row .form-group .error-indicator {
+            right: -25px;
+            top: 18px;
         }
 
         @keyframes pulse {
