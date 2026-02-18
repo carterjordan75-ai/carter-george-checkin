@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Carter & George Check-In">
+    <meta name="description" content="Patient check-in kiosk for Carter & George physiotherapy clinics">
+    <title>Carter & George Check-In</title>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Outfit:wght@400;500;600&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-user-select: none;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1a1a1a 0%, #0d0d0d 100%);
+            color: #ffffff;
+            font-family: 'Outfit', sans-serif;
+            font-size: 16px;
+            line-height: 1.6;
+            position: relative;
+        }
+
+        .screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transform: translateY(20px);
+            pointer-events: none;
+            transition: opacity 0.5s ease, transform 0.5s ease;
+            padding: 40px;
+        }
+
+        .screen.active {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+            z-index: 10;
+        }
+
+        /* Home Screen */
+        #homeScreen {
+            justify-content: center;
+            text-align: center;
+        }
+
+        .home-content {
+            animation: fadeUp 0.8s ease forwards;
+            opacity: 0;
+        }
+
+        .welcome-text {
+            font-size: 13px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: #999;
+            margin-bottom: 24px;
+            font-weight: 500;
+        }
+
+        .logo {
+            width: 100%;
+            height: auto;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo img {
+            max-width: 140px;
+            height: auto;
+            object-fit: contain;
+        }
+
+        .brand-heading {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 64px;
+            font-weight: 700;
+            margin-top: 60px;
+            margin-bottom: 80px;
+            letter-spacing: -2px;
+            line-height: 1;
+            color: #ffffff;
+        }
+
+        .gold-ampersand {
+            color: #00a7e1;
+        }
+
+        .check-in-button {
+            background: transparent;
+            border: 2px solid #00a7e1;
+            color: #00a7e1;
+            padding: 18px 60px;
+            font-size: 17px;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 600;
+            cursor: pointer;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            margin-top: 0px;
+            letter-spacing: 0.5px;
+            min-width: 300px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: inset 0 0 20px rgba(255, 255, 255, 0), 0 0 20px rgba(0, 167, 225, 0.3);
+            animation: borderGlow 3s infinite;
+        }
+
+        @keyframes borderGlow {
+            0% {
+                box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.8), 0 0 20px rgba(0, 167, 225, 0.3);
+            }
+            25% {
+                box-shadow: inset 0 2px 0 2px rgba(255, 255, 255, 0.8), 0 0 20px rgba(0, 167, 225, 0.3);
+            }
+            50% {
+                box-shadow: inset 0 -2px 0 2px rgba(255, 255, 255, 0.8), 0 0 20px rgba(0, 167, 225, 0.3);
+            }
+            75% {
+                box-shadow: inset -2px 0 0 2px rgba(255, 255, 255, 0.8), 0 0 20px rgba(0, 167, 225, 0.3);
+            }
+            100% {
+                box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.8), 0 0 20px rgba(0, 167, 225, 0.3);
+            }
+        }
+
+        .check-in-button:active {
+            background: linear-gradient(135deg, #00a7e1 0%, #0088b3 100%);
+            color: #ffffff;
+            border-color: #0088b3;
+            transform: scale(0.98);
+            box-shadow: 0 8px 24px rgba(0, 102, 204, 0.3);
+            animation: none;
+        }
+
+        /* Check-In Form Screen */
+        #checkInForm {
+            justify-content: flex-start;
+            padding-top: 80px;
+        }
+
+        .form-container {
+            width: 100%;
+            max-width: 500px;
+            animation: fadeUp 0.8s ease forwards;
+            opacity: 0;
+        }
+
+        .form-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 52px;
+            font-weight: 700;
+            margin-bottom: 48px;
+            text-align: center;
+            color: #ffffff;
+        }
+
+        .form-group {
+            margin-bottom: 30px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .form-row .form-group {
+            margin-bottom: 0;
+        }
+
+        label {
+            display: block;
+            font-size: 11px;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+            color: #666;
+            font-weight: 600;
+        }
+
+        input {
+            width: 100%;
+            background: transparent;
+            border: none;
+            border-bottom: 2px solid #444;
+            color: #ffffff;
+            padding: 14px 0;
+            font-size: 16px;
+            font-family: 'Outfit', sans-serif;
+            transition: border-color 0.3s ease;
+        }
+
+        input:focus {
+            outline: none;
+            border-bottom-color: #00a7e1;
+        }
+
+        input::placeholder {
+            color: #bbb;
+        }
+
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        input[type=number] {
+            -moz-appearance: textfield;
+        }
+
+        select {
+            width: 100%;
+            background: transparent;
+            border: none;
+            border-bottom: 2px solid #444;
+            color: #ffffff;
+            padding: 14px 0;
+            font-size: 16px;
+            font-family: 'Outfit', sans-serif;
+            transition: border-color 0.3s ease;
+            cursor: pointer;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right;
+            background-size: 20px;
+            padding-right: 30px;
+        }
+
+        select:focus {
+            outline: none;
+            border-bottom-color: #00a7e1;
+        }
+
+        .dob-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 20px;
+        }
+
+        .form-actions {
+            margin-top: 50px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .confirm-button {
+            background: linear-gradient(135deg, #00a7e1 0%, #0088b3 100%);
+            color: #ffffff;
+            border: none;
+            padding: 16px 50px;
+            font-size: 16px;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 600;
+            cursor: pointer;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            letter-spacing: 0.5px;
+            width: 100%;
+            max-width: 300px;
+            box-shadow: 0 4px 16px rgba(0, 102, 204, 0.2);
+        }
+
+        .confirm-button:active {
+            transform: scale(0.98);
+            box-shadow: 0 6px 20px rgba(0, 102, 204, 0.3);
+        }
+
+        .confirm-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .back-link {
+            color: #00a7e1;
+            text-decoration: none;
+            font-size: 14px;
+            cursor: pointer;
+            transition: color 0.3s ease;
+            letter-spacing: 0.5px;
+        }
+
+        .back-link:active {
+            color: #0088b3;
+        }
+
+        /* Notification Screen */
+        #notificationScreen {
+            justify-content: center;
+            text-align: center;
+        }
+
+        .notification-content {
+            animation: fadeUp 0.8s ease forwards;
+            opacity: 0;
+        }
+
+        .notification-heading {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 56px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: #ffffff;
+        }
+
+        .notification-subtitle {
+            font-size: 20px;
+            color: #999;
+            margin-bottom: 40px;
+            font-weight: 400;
+        }
+
+        /* Thank You Screen */
+        #thankYouScreen {
+            justify-content: center;
+            text-align: center;
+        }
+
+        .thank-you-content {
+            animation: fadeUp 0.8s ease forwards;
+            opacity: 0;
+        }
+
+        .checkmark-circle {
+            width: 120px;
+            height: 120px;
+            background: linear-gradient(135deg, #00a7e1 0%, #0088b3 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 40px;
+            animation: scaleIn 0.6s ease;
+            box-shadow: 0 8px 24px rgba(0, 102, 204, 0.3);
+        }
+
+        .checkmark {
+            font-size: 60px;
+            color: #ffffff;
+            animation: checkmarkDraw 0.6s ease;
+        }
+
+        .thank-you-heading {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 64px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            color: #ffffff;
+        }
+
+        .thank-you-subtitle {
+            font-size: 18px;
+            color: #666;
+            margin-bottom: 40px;
+            font-weight: 400;
+        }
+
+        .thank-you-message {
+            font-size: 20px;
+            color: #00a7e1;
+            margin-top: 30px;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+        }
+
+        .progress-bar {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #00a7e1 0%, #0088b3 100%);
+            width: 100%;
+            animation: shrinkWidth 5s linear forwards;
+        }
+
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: #ff6b6b;
+            color: #ffffff;
+            padding: 16px 24px;
+            border-radius: 8px;
+            font-size: 14px;
+            z-index: 100;
+            opacity: 0;
+            transition: all 0.4s ease;
+            pointer-events: none;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        /* Animations */
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes scaleIn {
+            from {
+                transform: scale(0.8);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        @keyframes checkmarkDraw {
+            from {
+                transform: scale(0);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        @keyframes shrinkWidth {
+            from {
+                width: 100%;
+            }
+            to {
+                width: 0%;
+            }
+        }
+
+        /* Tablet safe areas */
+        @supports (padding: max(0px)) {
+            body {
+                padding-top: max(0px, env(safe-area-inset-top));
+                padding-bottom: max(0px, env(safe-area-inset-bottom));
+                padding-left: max(0px, env(safe-area-inset-left));
+                padding-right: max(0px, env(safe-area-inset-right));
+            }
+        }
+
+
+        /* Virtual keyboard handling */
+        @media (max-height: 600px) {
+            .form-container {
+                padding-bottom: 30px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Home Screen -->
+    <div id="homeScreen" class="screen">
+        <div class="home-content">
+            <div class="logo" id="logoContainer">
+                <img src="CGLogoStandAlone.png" alt="Carter & George Logo" onerror="this.style.display='none'">
+            </div>
+            <h1 class="brand-heading">Carter <span class="gold-ampersand">&</span> George</h1>
+            <button class="check-in-button" onclick="app.showCheckInForm()">Check In</button>
+            <p class="welcome-text" style="margin-top: 60px; font-weight: 700;">We operate a virtual reception</p>
+        </div>
+    </div>
+
+    <!-- Check-In Form Screen -->
+    <div id="checkInForm" class="screen">
+        <div class="form-container">
+            <h2 class="form-title">Check In</h2>
+            <form id="checkInFormElement">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="firstName">First Name</label>
+                        <input
+                            type="text"
+                            id="firstName"
+                            placeholder="First Name"
+                            autocomplete="off"
+                            autocorrect="off"
+                            spellcheck="false"
+                            required
+                        >
+                    </div>
+                    <div class="form-group">
+                        <label for="lastName">Last Name</label>
+                        <input
+                            type="text"
+                            id="lastName"
+                            placeholder="Last Name"
+                            autocomplete="off"
+                            autocorrect="off"
+                            spellcheck="false"
+                            required
+                        >
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Date of Birth</label>
+                    <div class="dob-row">
+                        <div>
+                            <label for="dobDay" style="font-size: 11px; margin-bottom: 5px;">Day</label>
+                            <select id="dobDay" required>
+                                <option value="">Day</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="dobMonth" style="font-size: 11px; margin-bottom: 5px;">Month</label>
+                            <select id="dobMonth" required>
+                                <option value="">Month</option>
+                                <option value="01">January</option>
+                                <option value="02">February</option>
+                                <option value="03">March</option>
+                                <option value="04">April</option>
+                                <option value="05">May</option>
+                                <option value="06">June</option>
+                                <option value="07">July</option>
+                                <option value="08">August</option>
+                                <option value="09">September</option>
+                                <option value="10">October</option>
+                                <option value="11">November</option>
+                                <option value="12">December</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="dobYear" style="font-size: 11px; margin-bottom: 5px;">Year</label>
+                            <select id="dobYear" required>
+                                <option value="">Year</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="confirm-button">Confirm Check In</button>
+                    <a class="back-link" onclick="app.showHomeScreen()">← Back</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Notification Screen -->
+    <div id="notificationScreen" class="screen">
+        <div class="notification-content">
+            <h1 class="notification-heading">Thanks for checking in...</h1>
+            <p class="notification-subtitle">Your physio has been notified</p>
+        </div>
+        <div class="progress-bar"></div>
+    </div>
+
+    <!-- Thank You Screen -->
+    <div id="thankYouScreen" class="screen">
+        <div class="thank-you-content">
+            <div class="checkmark-circle">
+                <span class="checkmark">✓</span>
+            </div>
+            <h1 class="thank-you-heading">Thank You</h1>
+            <p class="thank-you-subtitle">Your physio has been notified</p>
+            <p class="thank-you-message">Please take a seat</p>
+        </div>
+        <div class="progress-bar"></div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toast" class="toast"></div>
+
+    <script>
+        const app = {
+            // Initialize app
+            init() {
+                this.showHomeScreen();
+                this.setupEventListeners();
+            },
+
+            // Setup all event listeners
+            setupEventListeners() {
+                this.populateDOBDropdowns();
+
+                const form = document.getElementById('checkInFormElement');
+                form.addEventListener('submit', (e) => this.handleFormSubmit(e));
+            },
+
+            // Populate day, month, year dropdowns
+            populateDOBDropdowns() {
+                const now = new Date();
+                const currentYear = now.getFullYear();
+
+                // Populate days (1-31)
+                const daySelect = document.getElementById('dobDay');
+                for (let i = 1; i <= 31; i++) {
+                    const option = document.createElement('option');
+                    option.value = String(i).padStart(2, '0');
+                    option.textContent = String(i).padStart(2, '0');
+                    daySelect.appendChild(option);
+                }
+
+                // Populate years (from 1900 to current year)
+                const yearSelect = document.getElementById('dobYear');
+                for (let i = currentYear; i >= 1900; i--) {
+                    const option = document.createElement('option');
+                    option.value = String(i);
+                    option.textContent = String(i);
+                    yearSelect.appendChild(option);
+                }
+            },
+
+            // Show home screen
+            showHomeScreen() {
+                this.switchScreen('homeScreen');
+                this.resetForm();
+            },
+
+            // Show check-in form
+            showCheckInForm() {
+                this.switchScreen('checkInForm');
+                document.getElementById('firstName').focus();
+            },
+
+            // Validate DOB from dropdowns
+            isValidDOB(day, month, year) {
+                if (!day || !month || !year) return false;
+
+                const dayNum = parseInt(day, 10);
+                const monthNum = parseInt(month, 10);
+                const yearNum = parseInt(year, 10);
+
+                // Check if date is valid
+                const date = new Date(yearNum, monthNum - 1, dayNum);
+                if (date.getFullYear() !== yearNum || date.getMonth() !== monthNum - 1 || date.getDate() !== dayNum) {
+                    return false;
+                }
+
+                // Check if in the past
+                if (date > new Date()) {
+                    return false;
+                }
+
+                // Check reasonable age range
+                if (yearNum < 1900 || yearNum > new Date().getFullYear()) {
+                    return false;
+                }
+
+                return true;
+            },
+
+            // Handle form submission
+            async handleFormSubmit(event) {
+                event.preventDefault();
+
+                const firstName = document.getElementById('firstName').value.trim();
+                const lastName = document.getElementById('lastName').value.trim();
+                const dobDay = document.getElementById('dobDay').value;
+                const dobMonth = document.getElementById('dobMonth').value;
+                const dobYear = document.getElementById('dobYear').value;
+
+                // Validation
+                if (!firstName) {
+                    this.showToast('Please enter your first name');
+                    return;
+                }
+                if (!lastName) {
+                    this.showToast('Please enter your last name');
+                    return;
+                }
+                if (!this.isValidDOB(dobDay, dobMonth, dobYear)) {
+                    this.showToast('Please enter a valid date of birth');
+                    return;
+                }
+
+                // Show thank you screen directly
+                this.showThankYouScreen();
+            },
+
+            // Show thank you screen
+            showThankYouScreen() {
+                this.switchScreen('thankYouScreen');
+
+                // Auto-return to home after 5 seconds
+                setTimeout(() => {
+                    this.showHomeScreen();
+                }, 5000);
+            },
+
+            // Reset form
+            resetForm() {
+                document.getElementById('checkInFormElement').reset();
+            },
+
+            // Show toast notification
+            showToast(message) {
+                const toast = document.getElementById('toast');
+                toast.textContent = message;
+                toast.classList.add('show');
+
+                setTimeout(() => {
+                    toast.classList.remove('show');
+                }, 3000);
+            },
+
+            // Switch screens
+            switchScreen(screenId) {
+                document.querySelectorAll('.screen').forEach(screen => {
+                    screen.classList.remove('active');
+                });
+                document.getElementById(screenId).classList.add('active');
+            },
+
+        };
+
+        // Initialize app when DOM is ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', () => app.init());
+        } else {
+            app.init();
+        }
+    </script>
+</body>
+</html>
