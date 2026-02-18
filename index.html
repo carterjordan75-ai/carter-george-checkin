@@ -482,28 +482,18 @@
 
         /* Toast Notification */
         .toast {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(255, 107, 107, 0.2);
-            border: 2px solid #ff6b6b;
-            border-radius: 8px;
-            padding: 16px 20px;
-            z-index: 100;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-            pointer-events: none;
-            font-size: 14px;
-            color: #ff6b6b;
-            text-align: center;
-            font-weight: 600;
-            min-width: 280px;
+            display: none;
         }
 
         .toast.show {
-            opacity: 1;
-            pointer-events: auto;
+            display: none;
+        }
+
+        /* Error field highlight */
+        input.error-field {
+            border-bottom: 2px solid #ff6b6b !important;
+            box-shadow: 0 0 10px rgba(255, 107, 107, 0.5) !important;
+            transition: box-shadow 0.3s ease;
         }
 
         /* Animations */
@@ -740,6 +730,13 @@
             async handleFormSubmit(event) {
                 event.preventDefault();
 
+                // Clear previous errors
+                document.getElementById('firstName').classList.remove('error-field');
+                document.getElementById('lastName').classList.remove('error-field');
+                document.getElementById('dobDay').classList.remove('error-field');
+                document.getElementById('dobMonth').classList.remove('error-field');
+                document.getElementById('dobYear').classList.remove('error-field');
+
                 const firstName = document.getElementById('firstName').value.trim();
                 const lastName = document.getElementById('lastName').value.trim();
                 const dobDay = document.getElementById('dobDay').value;
@@ -748,15 +745,17 @@
 
                 // Validation
                 if (!firstName) {
-                    this.showToast('Please enter your first name');
+                    document.getElementById('firstName').classList.add('error-field');
                     return;
                 }
                 if (!lastName) {
-                    this.showToast('Please enter your last name');
+                    document.getElementById('lastName').classList.add('error-field');
                     return;
                 }
                 if (!this.isValidDOB(dobDay, dobMonth, dobYear)) {
-                    this.showToast('Please enter a valid date of birth');
+                    if (!dobDay) document.getElementById('dobDay').classList.add('error-field');
+                    if (!dobMonth) document.getElementById('dobMonth').classList.add('error-field');
+                    if (!dobYear) document.getElementById('dobYear').classList.add('error-field');
                     return;
                 }
 
