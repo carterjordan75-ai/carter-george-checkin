@@ -491,9 +491,15 @@
 
         /* Error field highlight */
         input.error-field {
-            border-bottom: 2px solid #ff6b6b !important;
-            box-shadow: 0 0 10px rgba(255, 107, 107, 0.5) !important;
-            transition: box-shadow 0.3s ease;
+            border-bottom: 3px solid #ff6b6b !important;
+            box-shadow: 0 0 15px rgba(255, 107, 107, 0.8), inset 0 0 5px rgba(255, 107, 107, 0.3) !important;
+            animation: error-pulse 0.5s ease;
+        }
+
+        @keyframes error-pulse {
+            0% { box-shadow: 0 0 5px rgba(255, 107, 107, 0.5), inset 0 0 2px rgba(255, 107, 107, 0.2); }
+            50% { box-shadow: 0 0 20px rgba(255, 107, 107, 1), inset 0 0 8px rgba(255, 107, 107, 0.4); }
+            100% { box-shadow: 0 0 15px rgba(255, 107, 107, 0.8), inset 0 0 5px rgba(255, 107, 107, 0.3); }
         }
 
         /* Animations */
@@ -752,10 +758,16 @@
                     document.getElementById('lastName').classList.add('error-field');
                     return;
                 }
-                if (!this.isValidDOB(dobDay, dobMonth, dobYear)) {
+                if (!dobDay || !dobMonth || !dobYear) {
                     if (!dobDay) document.getElementById('dobDay').classList.add('error-field');
                     if (!dobMonth) document.getElementById('dobMonth').classList.add('error-field');
                     if (!dobYear) document.getElementById('dobYear').classList.add('error-field');
+                    return;
+                }
+                if (!this.isValidDOB(dobDay, dobMonth, dobYear)) {
+                    document.getElementById('dobDay').classList.add('error-field');
+                    document.getElementById('dobMonth').classList.add('error-field');
+                    document.getElementById('dobYear').classList.add('error-field');
                     return;
                 }
 
