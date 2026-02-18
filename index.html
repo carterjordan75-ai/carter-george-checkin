@@ -238,7 +238,7 @@
 
         select {
             width: 100%;
-            background: transparent;
+            background: transparent !important;
             border: none;
             border-bottom: 2px solid #444;
             color: #ffffff;
@@ -247,14 +247,31 @@
             font-family: 'Outfit', sans-serif;
             transition: border-color 0.3s ease;
             cursor: pointer;
-            -webkit-appearance: none;
-            -moz-appearance: none;
-            appearance: none;
+            -webkit-appearance: none !important;
+            -moz-appearance: none !important;
+            appearance: none !important;
             background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
             background-repeat: no-repeat;
             background-position: right;
             background-size: 20px;
             padding-right: 30px;
+        }
+
+        select::-webkit-listbox-button {
+            display: none;
+        }
+
+        select::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        select::-webkit-scrollbar-track {
+            background: #0d0d0d;
+        }
+
+        select::-webkit-scrollbar-thumb {
+            background: #444;
+            border-radius: 4px;
         }
 
         select:focus {
@@ -263,12 +280,19 @@
         }
 
         select option {
-            background-color: #1a1a1a;
-            color: #ffffff;
+            background-color: #1a1a1a !important;
+            color: #ffffff !important;
+            padding: 10px;
+        }
+
+        select option:checked {
+            background: linear-gradient(#00a7e1, #00a7e1) !important;
+            background-color: #00a7e1 !important;
+            color: #ffffff !important;
         }
 
         select option:disabled {
-            color: #999;
+            color: #999 !important;
         }
 
         .dob-row {
