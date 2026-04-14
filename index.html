@@ -612,9 +612,124 @@
                 padding-bottom: 30px;
             }
         }
+
+        /* Open in Chrome Overlay */
+        #chromeOverlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #1a1a1a 0%, #0d0d0d 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            text-align: center;
+            padding: 40px;
+        }
+
+        #chromeOverlay.hidden {
+            display: none;
+        }
+
+        .chrome-overlay-content {
+            animation: fadeUp 0.8s ease forwards;
+            opacity: 0;
+            max-width: 460px;
+        }
+
+        .chrome-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 32px;
+        }
+
+        .chrome-icon svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        .chrome-overlay-heading {
+            font-family: 'Open Sans', sans-serif;
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            color: #ffffff;
+        }
+
+        .chrome-overlay-text {
+            font-size: 16px;
+            color: #999;
+            margin-bottom: 40px;
+            line-height: 1.6;
+        }
+
+        .chrome-open-button {
+            background: linear-gradient(135deg, #00a7e1 0%, #0088b3 100%);
+            color: #ffffff;
+            border: none;
+            padding: 18px 50px;
+            font-size: 17px;
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 600;
+            cursor: pointer;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            letter-spacing: 0.5px;
+            min-width: 280px;
+            box-shadow: 0 4px 16px rgba(0, 102, 204, 0.3);
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .chrome-open-button:active {
+            transform: scale(0.98);
+            box-shadow: 0 6px 20px rgba(0, 102, 204, 0.4);
+        }
+
+        .chrome-continue-link {
+            display: block;
+            margin-top: 24px;
+            color: #666;
+            font-size: 13px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: color 0.3s ease;
+            letter-spacing: 0.5px;
+        }
+
+        .chrome-continue-link:active {
+            color: #999;
+        }
     </style>
 </head>
 <body>
+    <!-- Open in Chrome Overlay -->
+    <div id="chromeOverlay" class="hidden">
+        <div class="chrome-overlay-content">
+            <div class="chrome-icon">
+                <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="24" cy="24" r="22" fill="none" stroke="#ffffff" stroke-width="2" opacity="0.3"/>
+                    <circle cx="24" cy="24" r="10" fill="none" stroke="#00a7e1" stroke-width="2.5"/>
+                    <line x1="24" y1="2" x2="24" y2="14" stroke="#ffffff" stroke-width="2" opacity="0.5"/>
+                    <line x1="4.8" y1="35" x2="15" y2="29" stroke="#ffffff" stroke-width="2" opacity="0.5"/>
+                    <line x1="43.2" y1="35" x2="33" y2="29" stroke="#ffffff" stroke-width="2" opacity="0.5"/>
+                </svg>
+            </div>
+            <h1 class="chrome-overlay-heading">Open in Chrome</h1>
+            <p class="chrome-overlay-text">
+                This check-in kiosk works best in Google Chrome.<br>
+                Please open this page in Chrome for the best experience.
+            </p>
+            <a id="chromeOpenLink" class="chrome-open-button" href="#">Open in Chrome</a>
+            <a class="chrome-continue-link" onclick="document.getElementById('chromeOverlay').classList.add('hidden')">Continue anyway</a>
+        </div>
+    </div>
+
     <!-- Home Screen -->
     <div id="homeScreen" class="screen">
         <div class="home-content">
@@ -893,11 +1008,45 @@
 
         };
 
+        // Detect non-Chrome browsers and show overlay
+        function checkBrowser() {
+            const ua = navigator.userAgent;
+            const isChrome = /Chrome/.test(ua) && !/Edg|OPR|SamsungBrowser/.test(ua);
+            const isChromeIOS = /CriOS/.test(ua);
+
+            if (isChrome || isChromeIOS) return;
+
+            const overlay = document.getElementById('chromeOverlay');
+            const openLink = document.getElementById('chromeOpenLink');
+            const currentUrl = window.location.href;
+
+            // Build Chrome URL based on platform
+            const isIOS = /iPad|iPhone|iPod/.test(ua);
+            const isAndroid = /Android/.test(ua);
+
+            if (isIOS) {
+                // iOS: use googlechrome:// or googlechromes:// scheme
+                const chromeUrl = currentUrl.replace(/^https:\/\//, 'googlechromes://').replace(/^http:\/\//, 'googlechrome://');
+                openLink.href = chromeUrl;
+            } else if (isAndroid) {
+                // Android: use intent URL
+                const intentUrl = 'intent://' + currentUrl.replace(/^https?:\/\//, '') + '#Intent;scheme=https;package=com.android.chrome;end';
+                openLink.href = intentUrl;
+            } else {
+                // Desktop: just show the message, no auto-redirect
+                openLink.href = currentUrl;
+                openLink.setAttribute('onclick', "navigator.clipboard.writeText(window.location.href); this.textContent='URL Copied!'; return false;");
+            }
+
+            overlay.classList.remove('hidden');
+        }
+
         // Initialize app when DOM is ready
         if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', () => app.init());
+            document.addEventListener('DOMContentLoaded', () => { app.init(); checkBrowser(); });
         } else {
             app.init();
+            checkBrowser();
         }
     </script>
 </body>
